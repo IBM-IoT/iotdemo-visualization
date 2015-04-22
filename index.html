@@ -1,0 +1,464 @@
+<!DOCTYPE HTML>
+<html>
+   	<head>
+   		<meta charset="UTF-8">
+   		<title>IoT Demo</title>
+   		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+   		<link href="jquery/jquery.mobile-1.4.2.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/main.css">
+   		<script src="jquery/jquery-1.11.1.js"></script>
+   		<script src="jquery/hammer.js"></script>
+		<script src="jquery/jquery.hammer.js"></script>
+		<script src="jquery/jstorage.js"></script>
+		
+		<script type="text/javascript">
+		$( document ).on( "mobileinit" , function() {
+			$.event.special.tap.tapholdThreshold = 250;
+			$.event.special.tap.emitTapOnTaphold = false;
+			$.mobile.autoInitializePage = false;
+		} );
+		</script>
+		
+   		<script src="jquery/jquery.mobile-1.4.2.js"></script>
+   	</head>
+	
+   	<body>
+		<!-- main page -->
+		<div data-role="page" id="loadingPage">
+			<div data-role="ui-content"></div>
+		</div>
+		
+		<div data-role="page" id="mainPage">
+			<div data-role="header">
+				<h3>Log In</h3>
+				<a href="#createUserPopup" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-right ui-mini ui-btn-inline ui-corner-all ui-btn-icon-right ui-icon-plus">Create User</a>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<input id="loginUsername" type="text" placeholder="Username">
+				<div class="slidingError" id="loginError"> </div>
+				<button id="loginLogInButton">Log In</button>
+				<div class="versionContainer"></div>
+			</div>
+			<div data-role="popup" id="createUserPopup" data-overlay-theme="b" style="padding:10px; min-width:250px">
+				<input id="createUserName" type="text" placeholder="Username">
+				<div class="slidingError" id="createUserError"></div>
+				<button id="createUserButton">Create</button>
+			</div>
+		</div>
+		<!-- menu page -->
+   		<div data-role="page" id="menuPage">
+   			
+   			<div data-role="panel" data-position="right" data-display="overlay" id="menuPagePanel">
+   				<ul data-role="listview">
+   					<li><a href="#" id="menuPagePanelQueryMgr" class="ui-btn ui-btn-icon-left ui-icon-bars">Data Series Manager</a></li>
+  					<li><a href="#" id="menuPagePanelHostMgr" class="ui-btn ui-btn-icon-left ui-icon-bars">Host Manager</a></li>
+   					<li><a href="#dbQueryPage" class="ui-btn ui-btn-icon-left ui-icon-bullets">Database Query</a></li>
+   					<li><a href="#" id="menuSwitchUser" class="ui-btn ui-btn-icon-left ui-icon-user">Switch User</a></li>
+   				</ul>
+   			</div>
+   		
+			<div data-role="header">
+				<a href="#" id="menuBack" style="display:none" class="ui-btn ui-btn-left ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-carat-l">Back</a>
+				<h3 id="menuPageTitle">Menu</h3>
+				<a href="#menuPagePanel" class="ui-btn ui-btn-right ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-bars">Menu</a>
+			</div>
+			<div data-role="ui-content">
+				<div class="menuContainer">
+					<a id="menuPrev" class="menuPageBtn" href="#"> </a>
+					<div class="gridMenu">
+						
+					</div>
+					<a id="menuNext" class="menuPageBtn" href="#"> </a>
+					<div class="versionContainer"></div>
+				</div>
+   			</div>
+			<div data-role="popup" id="menuDeletePopup" data-dismissible="false" data-overlay-theme="b">
+				<p>Delete?</p>
+				<div class="ui-grid-a">
+					<div class="ui-block-a"><a href="#" class="ui-btn" data-rel="back" id="menuDeleteConfirm">Yes</a></div>
+					<div class="ui-block-b"><a href="#" class="ui-btn" data-rel="back">No</a></div>
+				</div>
+			</div>
+			<div data-role="popup" id="menuAddPopup" data-overlay-theme="b"></div>
+   		</div>
+		<!-- graphPage -->
+   		<div data-role="page" id="graphPage" style="overflow-x: visible; background-color:#333">
+   			<div data-role="ui-content">
+				<div class="no-select" style="position: absolute; left:10px; z-index:100">
+					<a href="#" id="graphPageBack" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-carat-l">Back</a>
+					<a href="#" id="graphPagePause" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-my-pause">Pause</a>
+					<a href="#graphPageLayoutPopup" id="graphPageLayout" data-rel="popup" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-my-panels-v">Layout</a>
+					<a href="#" id="graphPageLayoutSnap" style="display:none" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-my-snap-off">Toggle Snapping</a>
+					<a href="#" id="graphPageLayoutRatio" style="display:none" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-my-ratio-off">Toggle Ratio</a>
+					<a href="#" id="graphPageLayoutDone" style="display:none" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-check">Done</a>
+				</div>
+				<div id="graphContent">
+				</div>
+   			</div>
+   			<div data-role="popup" id="graphPageLayoutPopup">
+   				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-my-panels-v">Vertical</button>
+   				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-my-panels-h">Horizontal</button>
+   				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-edit">Edit</button>
+   				<button id="graphPageLayoutCustom" style="display:none" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-notext ui-icon-user">Custom</button>
+   			</div>
+   		</div>
+		<!-- addGraphPage -->
+		<div data-role="page" id="addGraphPage">
+			<div data-role="header">
+				<a href="#menuPage" class="ui-btn ui-btn-left ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+				<h3 id="addItemTitle"> </h3>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<div class="slidingError" id="addGraphError"> </div>
+				
+				<div class="ui-field-contain">
+					<label for="addGraphName"><span class="req">*</span> Name:</label>
+					<input id="addGraphName" type="text" value="">
+				</div>
+				
+				<div id="addItemSettings">
+					<div id="addItemGroup">
+						<div class="ui-field-contain">
+							<label for="addGraphGroupQueryLimit">Limit:</label>
+							<input id="addGraphGroupQueryLimit" type="text" value="">
+						</div>
+					</div>
+					<div id="addItemGraph">
+						<div class="ui-field-contain">
+							<label for="addGraphMaxPoints"><span class="req">*</span> Max data points:</label>
+							<input id="addGraphMaxPoints" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphInterval"><span class="req">*</span> Graph interval (s):</label>
+							<input id="addGraphInterval" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphMinY">Minimum Y:</label>
+							<input id="addGraphMinY" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphMaxY">Maximum Y:</label>
+							<input id="addGraphMaxY" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphThreshold">Threshold:</label>
+							<input id="addGraphThreshold" type="text" value="">
+						</div>
+					</div>
+					<div id="addItemBarGraph">
+						<div class="ui-field-contain">
+							<label for="addGraphBarElemCount"><span class="req">*</span> # of Elements:</label>
+							<input id="addGraphBarElemCount" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphBarOrigin">Origin:</label>
+							<input id="addGraphBarOrigin" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphBarLow">Low:</label>
+							<input id="addGraphBarLow" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphBarHigh">High:</label>
+							<input id="addGraphBarHigh" type="text" value="">
+						</div>
+					</div>
+					<div id="addItemPieChart">
+						<div class="ui-field-contain">
+							<label for="addGraphPieElemCount"><span class="req">*</span> # of Elements:</label>
+							<input id="addGraphPieElemCount" type="text" value="">
+						</div>
+					</div>
+					<div id="addItemDataSheet">
+						<div class="ui-field-contain">
+							<label for="addGraphDSElemCount"># of Elements:</label>
+							<input id="addGraphDSElemCount" type="text" value="">
+						</div>
+					</div>
+					<div id="addItemMap">
+						<div class="ui-field-contain">
+							<label for="addGraphMapElemCount"># of Elements:</label>
+							<input id="addGraphMapElemCount" type="text" value="">
+						</div>
+					</div>
+					<div id="addItemGauge">
+						<div class="ui-field-contain">
+							<label for="addGraphGaugeInterval"><span class="req">*</span> Interval (s):</label>
+							<input id="addGraphGaugeInterval" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphGaugeMin"><span class="req">*</span> Minimum:</label>
+							<input id="addGraphGaugeMin" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphGaugeMax"><span class="req">*</span> Maximum:</label>
+							<input id="addGraphGaugeMax" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphGaugeLowThreshold">Low Threshold:</label>
+							<input id="addGraphGaugeLowThreshold" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphGaugeHighThreshold">High Threshold:</label>
+							<input id="addGraphGaugeHighThreshold" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphGaugeAction">Action:</label>
+							<input id="addGraphGaugeAction" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="addGraphGaugeActionAlways">Trigger Always:</label>
+							<select id="addGraphGaugeActionAlways" data-role="slider">
+								<option value="no">No</option>
+								<option value="yes">Yes</option>
+							</select>
+						</div>
+					</div>
+				</div>
+					
+				<div id="addGraphDSContainer">
+					<div id="addGraphGraphs"></div>
+				
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal">
+							<legend>&nbsp;</legend>
+							<input id="addGraphAddAnother" type="button" value="Add Another Data Series">
+						</fieldset>
+					</div>
+				</div>
+				
+				<button id="addItemAdd"> </button>
+   			</div>
+   		</div>
+		<!-- createQueryPage -->
+		<div data-role="page" id="createQueryPage">
+			<div data-role="header">
+				<a href="#queryMgrPage" class="ui-btn ui-btn-left ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+				<h3>Create Data Series</h3>
+				<button id="createQueryCopyExisting" class="ui-btn ui-btn-right ui-mini ui-btn-inline ui-corner-all ui-btn-icon-right ui-icon-bars">Copy Existing</button>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<div class="slidingError" id="createQueryError"> </div>
+				<div class="ui-field-contain">
+					<label for="createQueryHost"><span class="req">*</span> Host:</label>
+					<button id="createQueryHost" class="ui-btn ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-bars">Select</button>
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryName"><span class="req">*</span> Name:</label>
+					<input id="createQueryName" type="text" value="">
+				</div>
+				<div id="createQuerySettings">
+					<div id="createQueryLineGraph">
+						<div class="ui-field-contain">
+							<label for="createQueryInit"><span class="req">*</span> Init Query:</label>
+							<input id="createQueryInit" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="createQueryMain"><span class="req">*</span> Main Query:</label>
+							<input id="createQueryMain" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="createQueryIsStatic">Static Data:</label>
+							<select id="createQueryIsStatic" data-role="slider">
+								<option value="no">No</option>
+								<option value="yes">Yes</option>
+							</select>
+						</div>
+						<div class="ui-field-contain">
+							<label for="createQueryTimeOffset">Time Offset (s):</label>
+							<input id="createQueryTimeOffset" type="text" value="">
+						</div>
+					</div>
+					<div id="createQueryBarGraph">
+						<div class="ui-field-contain">
+							<label for="createQueryBGMain"><span class="req">*</span> Query:</label>
+							<input id="createQueryBGMain" type="text" value="">
+						</div>
+					</div>
+					<div id="createQueryGroup">
+						<div class="ui-field-contain">
+							<label for="createQueryGroupMain"><span class="req">*</span> Query:</label>
+							<input id="createQueryGroupMain" type="text" value="">
+						</div>
+					</div>
+					<div id="createQueryMap">
+						<div class="ui-field-contain">
+							<label for="createQueryMapMain"><span class="req">*</span> Query:</label>
+							<input id="createQueryMapMain" type="text" value="">
+						</div>
+					</div>
+					<div id="createQueryDS">
+						<div class="ui-field-contain">
+							<label for="createQueryDSMain"><span class="req">*</span> Query:</label>
+							<input id="createQueryDSMain" type="text" value="">
+						</div>
+					</div>
+					<div id="createQueryGauge">
+						<div class="ui-field-contain">
+							<label for="createQueryGaugeMain"><span class="req">*</span> Query:</label>
+							<input id="createQueryGaugeMain" type="text" value="">
+						</div>
+						<div class="ui-field-contain">
+							<label for="createQueryGaugeUnits">Units:</label>
+							<input id="createQueryGaugeUnits" type="text" value="">
+						</div>
+					</div>
+				</div>
+
+				<button id="createQueryCreate">Create</button>
+				<button id="createQuerySave">Save Changes</button>
+			</div>
+		</div>
+		
+		<!-- Query Manager Page -->
+		<div data-role="page" id="queryMgrPage">
+			<div data-role="header">
+				<button id="queryMgrBack" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-carat-l">Back</button>
+				<h3>Data Series Manager</h3>
+				<button id="queryMgrAdd" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-right ui-icon-plus">Add Data Series</button>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<ul id="queryMgrList" data-role="listview" data-icon="false" data-split-theme="a" data-split-icon="delete" data-inset="true" data-filter="true" data-filter-placeholder="Search...">
+				</ul>
+			</div>
+			<div data-role="popup" id="queryMgrAddPopup" data-overlay-theme="b"></div>
+			<div data-role="popup" id="queryMgrDeleteError" style="padding:10px 20px">
+				<p>Please remove all references to this Data Series before attempting to remove it.</p>
+				<a href="#" data-rel="back" class="ui-btn ui-mini">OK</a>
+			</div>
+		</div>
+		
+		<!-- Database Query Page -->
+		<div data-role="page" id="dbQueryPage">
+			<div data-role="header">
+				<a href="#menuPage" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-carat-l">Back</a>
+				<h3>Database Query</h3>
+				<button id="dbQueryContinue" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-right ui-icon-refresh"></button>
+			</div>
+			<div data-role="ui-content">
+			
+				<button id="dbQueryShowForm" class="ui-btn ui-btn-icon-notext ui-icon-carat-d" style="width:100%; margin:0"> </button>
+			
+				<div data-role="tabs" id="dbQueryTabs">
+					<div data-role="navbar">
+						<ul>
+							<li><a href="#sqlQueryTab" data-ajax="false">SQL</a></li>
+							<li><a href="#mongoQueryTab" data-ajax="false">Mongo</a></li>
+						</ul>
+					</div>
+					
+					<div class="ui-content">
+						<div data-role="fieldcontain">
+							<label for="dbQueryHost"><span class="req">*</span> Host:</label>
+							<button id="dbQueryHost" class="ui-btn ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-bars">Select</button>
+						</div>
+					</div>
+					
+					<div class="slidingError" id="dbQueryError"></div>
+					
+					<div id="sqlQueryTab" class="ui-content">
+						<div data-role="fieldcontain">
+							<label for="sqlQueryText"><span class="req">*</span> Query:</label>
+							<input type="text" id="sqlQueryText" value="">
+						</div>
+						<div data-role="fieldcontain">
+							<label for="sqlBatchSizeText">Batch Size:</label>
+							<input type="text" id="sqlBatchSizeText" value="">
+						</div>
+						<div data-role="fieldcontain">
+							<label for="sqlCursorIdText">Cursor Id:</label>
+							<input type="text" id="sqlCursorIdText" value="">
+						</div>
+						<button id="dbQueryRunSQL">Run Query</button>
+					</div>
+					<div id="mongoQueryTab" class="ui-content">
+						<div data-role="fieldcontain">
+							<label for="mongoNamespaceText">Namespace:</label>
+							<input type="text" id="mongoNamespaceText" value="">
+						</div>
+						<div data-role="fieldcontain">
+							<label for="mongoQueryText">Query:</label>
+							<input type="text" id="mongoQueryText" value="">
+						</div>
+						<div data-role="fieldcontain">
+							<label for="mongoFieldsText">Fields:</label>
+							<input type="text" id="mongoFieldsText" value="">
+						</div>
+						<div data-role="fieldcontain">
+							<label for="mongoSortText">Sort:</label>
+							<input type="text" id="mongoSortText" value="">
+						</div>
+						<div data-role="fieldcontain">
+							<label for="mongoBatchSizeText">Batch Size:</label>
+							<input type="text" id="mongoBatchSizeText" value="">
+						</div>
+						<div data-role="fieldcontain">
+							<label for="mongoCursorIdText">Cursor Id:</label>
+							<input type="text" id="mongoCursorIdText" value="">
+						</div>
+						<button id="dbQueryRunMongo">Run Query</button>
+					</div>
+				</div>
+				
+				<div class="ui-content" id="dbQueryResult" style="overflow-x:scroll">
+				
+				</div>
+			</div>
+		</div>
+		
+		<div data-role="page" id="hostMgrPage">
+			<div data-role="header">
+				<a href="#" data-rel="back" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-carat-l">Back</a>
+				<h3>Host Manager</h3>
+				<button id="hostMgrAdd" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-right ui-icon-plus">Add Host</button>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<ul id="hostMgrList" data-role="listview" data-icon="false" data-split-theme="a" data-split-icon="delete" data-inset="true" data-filter="true" data-filter-placeholder="Search...">
+				</ul>
+			</div>
+			
+			<div data-role="popup" id="hostMgrFormPopup" style="padding:10px 20px">
+				<div id="hostMgrFormError" class="slidingError"></div>
+				<input type="text" id="hostMgrFormName" placeholder="Name" value="">
+				<input type="text" id="hostMgrFormHost" placeholder="Host" value="">
+				<input type="text" id="hostMgrFormPort" placeholder="Port" value="">
+				<input type="text" id="hostMgrFormDB" placeholder="Database" value="">
+				<input type="text" id="hostMgrFormUser" placeholder="Username" value="">
+				<input type="text" id="hostMgrFormPass" placeholder="Password" value="">
+				<button id="hostMgrFormAdd" class="ui-btn ui-mini ui-btn-icon-left ui-icon-plus">Add Host</button>
+				<button id="hostMgrFormSave" class="ui-btn ui-mini ui-btn-icon-left ui-icon-check">Save Changes</button>
+			</div>
+			
+			<div data-role="popup" id="hostMgrDeleteError" style="padding:10px 20px">
+				<p>Please remove all references to this host before attempting to remove it.</p>
+				<a href="#" data-rel="back" class="ui-btn ui-mini">OK</a>
+			</div>
+		</div>
+		
+		<div data-role="page" id="testPage">
+		
+		</div>
+		
+		<script src="js/database.js"></script>
+   		<script src="js/utils.js"></script>
+		
+		<script src="js/CGraph/CInternalGraph.js"></script>
+   		<script src="js/CGraph/CGraph.js"></script>
+		<script src="js/CGraph/CBarGraph.js"></script>
+		<script src="js/CGraph/CPieGraph.js"></script>
+		<script src="js/CGraph/CDataSheet.js"></script>
+		<script src="js/CGraph/CMap.js"></script>
+		<script src="js/CGraph/CGauge.js"></script>
+		
+		<script src="js/menu.js"></script>
+		<script src="js/pages/menu.js"></script>
+		<script src="js/pages/graphview.js"></script>
+		<script src="js/pages/graphs.js"></script>
+		<script src="js/pages/queries.js"></script>
+		<script src="js/pages/dbquery.js"></script>
+		<script src="js/pages/hostmgr.js"></script>
+   		<script src="js/main.js"></script>
+   		
+   	</body>
+</html>

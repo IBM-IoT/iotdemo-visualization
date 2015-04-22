@@ -1,0 +1,10 @@
+{
+	"db":{
+		"host" : "198.23.75.155",
+		"port" : "27018",
+		"db"   : "iotdemo_menu"
+	},
+	"graphs":{
+		"defaultColors":[ "#696ccc" , "#5a75e0" , "#9a5fc6", "#102d5f"  , "#5f98c6"  ]
+	}
+}

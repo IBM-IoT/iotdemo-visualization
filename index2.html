@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Testing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="stylesheet" href="css/main.css">
+<link href="jquery/jquery.mobile-1.4.2.css" rel="stylesheet">
+<script src="jquery/jquery-1.11.1.js"></script>
+<script src="jquery/jquery.mobile-1.4.2.js"></script>
+</head>
+<body>
+	<div data-role="page" id="mainPage">
+		<div data-role="header" id="header">
+			<h3>REST Query</h3>
+		</div>
+		<div data-role="ui-content">
+			<ul data-role="listview">
+				<li><a href="#configurationPage">Configuration</a></li>
+				<li><a href="#sqlQueryPage">SQL Query</a></li>
+				<li><a href="#mongoQueryPage">Mongo Query</a></li>
+			</ul>
+		</div>
+	</div>
+	<div data-role="page" id="configurationPage" style="overflow-x: visible">
+		<div data-role="fieldcontain">
+			<label for="name">Host:</label> <input type="text" name="hostText" id="hostText" value="" />
+			<label for="name">Username:</label> <input type="text" name="usernameText" id="usernameText" value="" />
+			<label for="name">Password:</label> <input type="text" name="passwordText" id="passwordText" value="" />
+		</div>
+		<div data-role="ui-content">
+			<button id="saveConfigurationButton" class="ui-btn ui-btn-inline" type="button">Save</button>
+		</div>
+		<div id="configurationStatus" data-role="ui-content"></div>
+	</div>
+	<div data-role="page" id="sqlQueryPage" style="overflow-x: visible">
+		<div data-role="fieldcontain">
+			<label for="name">Database:</label> <input type="text" name="databaseText" id="sqlDatabaseText" value="" />
+			<label for="name">Query:</label> <input type="text" name="queryText" id="sqlQueryText" value="" />
+			<label for="name">Batch Size:</label> <input type="text" name="batchSizeText" id="sqlBatchSizeText" value="" />
+			<label for="name">Cursor Id:</label> <input type="text" name="cursorIdText" id="sqlCursorIdText" value="" />
+		</div>
+		<div data-role="ui-content">
+			<button id="runSqlQueryButton" class="ui-btn ui-btn-inline" type="button">Run Query</button>
+		</div>
+		<div id="sqlQueryResult" data-role="ui-content"></div>
+	</div>
+	<div data-role="page" id="mongoQueryPage" style="overflow-x: visible">
+		<div data-role="fieldcontain">
+			<label for="name">Namespace:</label> <input type="text" name="queryText" id="mongoNamespaceText" value="" />
+			<label for="name">Query:</label> <input type="text" name="queryText" id="mongoQueryText" value="" />
+			<label for="name">Fields:</label> <input type="text" name="fieldsText" id="mongoFieldsText" value="" />
+			<label for="name">Sort:</label> <input type="text" name="sortText" id="mongoSortText" value="" />
+			<label for="name">Batch Size:</label> <input type="text" name="batchSizeText" id="mongoBatchSizeText" value="" />
+			<label for="name">Cursor Id:</label> <input type="text" name="cursorIdText" id="mongoCursorIdText" value="" />
+		</div>
+		<div data-role="ui-content">
+			<button id="runMongoQueryButton" class="ui-btn ui-btn-inline" type="button">Run Query</button>
+		</div>
+		<div id="mongoQueryResult" data-role="ui-content"></div>
+	</div>
+	<script src="jquery/jstorage.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/main2.js"></script>
+	<script>
+		Init();
+	</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html>
+   	<head>
+   		<meta charset="UTF-8">
+   		<title>Testing</title>
+   		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+   		<link href="jquery/jquery.mobile-1.4.2.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/main.css">
+   		<script src="jquery/jquery-1.11.1.js"></script>
+		
+		<script type="text/javascript">
+		$( document ).on( "mobileinit" , function() {
+			$.event.special.tap.tapholdThreshold = 500;
+			$.event.special.tap.emitTapOnTaphold = false;
+		} );
+		</script>
+		
+   		<script src="jquery/jquery.mobile-1.4.2.js"></script>
+		<script src="jquery/hammer.js"></script>
+		<script src="jquery/jquery.hammer.js"></script>
+		<script src="jquery/jstorage.js"></script>
+   	</head>
+   	<body>
+		<div data-role="page" id="mainPage">
+			<div data-role="header">
+				<h3>Log In</h3>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<input id="loginUsername" type="text" placeholder="Username">
+				<div class="slidingError" id="loginError"> </div>
+				<button id="loginLogInButton">Log In</button>
+			</div>
+		</div>
+   		<div data-role="page" id="menuPage">
+			<div data-role="header">
+				<a href="#" id="menuBack" style="display:none" class="ui-btn ui-btn-left ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-carat-l">Back</a>
+				<h3 id="menuPageTitle">Menu</h3>
+				<button id="menuSwitchUser" class="ui-btn ui-btn-right ui-mini ui-btn-inline ui-corner-all ui-btn-icon-right ui-icon-user">Switch User</button>
+			</div>
+			<div data-role="ui-content">
+   				<div class="gridMenu">
+					
+   				</div>
+   			</div>
+   		</div>
+   		<div data-role="page" id="graphPage" style="overflow-x: visible">
+   			<div data-role="ui-content">
+				<div style="position: absolute; left:10px; z-index:100">
+					<a href="#menuPage" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-carat-l">Back</a>
+					<a href="#" id="graphPagePause" class="ui-btn ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-my-pause">Pause</a>
+				</div>
+				<div id="graphContent">
+				</div>
+   			</div>
+   		</div>
+		
+		<div data-role="page" id="graphPage2" style="overflow-x: visible">
+   			<div data-role="ui-content">
+				<div id="graphContent2">
+				
+				</div>
+   			</div>
+   		</div>
+		
+		<div data-role="page" id="addGraphPage">
+			<div data-role="header">
+				<a href="#menuPage" class="ui-btn ui-btn-left ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+				<h3 id="addGraphTitle"> </h3>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<div class="slidingError" id="addGraphError"> </div>
+				<div class="ui-field-contain">
+					<label for="addGraphName">Name:</label>
+					<input id="addGraphName" type="text" value="">
+				</div>
+				<div class="ui-field-contain">
+					<label for="addGraphIsGroup">Create group:</label>
+					<select id="addGraphIsGroup" data-role="slider">
+						<option value="no">No</option>
+						<option value="yes">Yes</option>
+					</select>
+				</div>
+				<div id="addGraphSettings">
+					<div class="ui-field-contain">
+						<label for="addGraphMaxPoints">Max data points:</label>
+						<input id="addGraphMaxPoints" type="text" value="">
+						<label for="addGraphInterval">Graph interval(s):</label>
+						<input id="addGraphInterval" type="text" value="">
+						<label for="addGraphThreshold">Threshold:</label>
+						<input id="addGraphThreshold" type="text" value="">
+					</div>
+					
+					<div id="addGraphGraphs">
+						
+					</div>
+					
+					<div class="ui-field-contain">
+						<fieldset data-role="controlgroup" data-type="horizontal">
+							<legend>&nbsp;</legend>
+							<input id="addGraphAddAnother" type="button" value="Add Another Data Series">
+						</fieldset>
+					</div>
+					
+				</div>
+				<button id="addGraphAdd"> </button>
+   			</div>
+   		</div>
+		
+		<div data-role="page" id="createQueryPage">
+			<div data-role="header">
+				<a href="#addGraphPage" class="ui-btn ui-btn-left ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+				<h3>Create Data Series</h3>
+				<button id="createQuerySneaky" class="ui-btn ui-btn-right ui-mini ui-btn-inline ui-corner-all ui-btn-icon-right ui-icon-bars">Sneaky Button</button>
+			</div>
+			<div data-role="ui-content" class="paddedContent">
+				<div class="slidingError" id="createQueryError"> </div>
+				<div class="ui-field-contain">
+					<label for="createQueryName">Name:</label>
+					<input id="createQueryName" type="text" value="">
+					
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryInit">Init Query:</label>
+					<input id="createQueryInit" type="text" value="">
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryMain">Main Query:</label>
+					<input id="createQueryMain" type="text" value="">
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryIsStatic">Static Data:</label>
+					<select id="createQueryIsStatic" data-role="slider">
+						<option value="no">No</option>
+						<option value="yes">Yes</option>
+					</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryTimeOffset">Time Offset(s)(...for now):</label>
+					<input id="createQueryTimeOffset" type="text" value="">
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryHost">Host:</label>
+					<input id="createQueryHost" type="text" value="">
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryPort">Port:</label>
+					<input id="createQueryPort" type="text" value="">
+				</div>
+				<div class="ui-field-contain">
+					<label for="createQueryDB">Database:</label>
+					<input id="createQueryDB" type="text" value="">
+				</div>
+				<button id="createQueryCreate">Create</button>
+			</div>
+		</div>
+		
+		<div data-role="page" id="selectQueryPage">
+			<div data-role="header">
+				<a href="#addGraphPage" class="ui-btn ui-btn-left ui-mini ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+				<h3>Select Data Series</h3>
+			</div>
+			<div data-role="ui-content">
+				<ul data-role="listview" id="selectQueryList">
+				
+				</ul>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
+		
+   		<script src="js/database.js"></script>
+   		<script src="js/utils.js"></script>
+		
+		<script src="js/CGraph/CInternalGraph.js"></script>
+   		<script src="js/CGraph/CGraph.js"></script>
+		
+		<script src="js/menu.js"></script>
+   		<script src="js/main.js"></script>
+   	</body>
+</html>
